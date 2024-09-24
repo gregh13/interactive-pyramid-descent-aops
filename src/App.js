@@ -67,7 +67,7 @@ const App = () => {
   
   // Helper function to add a cell to coordinate set
   const addPathCoordinateSet = ({ row, col }) => {
-    setPathCoordinateSet(prevSet => { new Set(prevSet).add(`${row},${col}`)});
+    setPathCoordinateSet(prevSet => new Set(prevSet).add(`${row},${col}`));
   };
 
   // Helper function to remove a cell from coordinate set
