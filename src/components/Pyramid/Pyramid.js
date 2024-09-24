@@ -1,13 +1,19 @@
 import React from 'react';
 import Cell from '../Cell/Cell.js';
 
-const Pyramid = ({ pyramid }) => {
+const Pyramid = ({ pyramid, currentNode, pathCoordinatesSet }) => {
   return (
     <div className="pyramid">
+        
       {pyramid.map((row, rowIndex) => (
         <div key={rowIndex} className="pyramid-row">
           {row.map((value, colIndex) => {
-            const status = "TODO"
+            const status =
+              pathCoordinatesSet.has(`${rowIndex},${colIndex}`)
+                ? 'solution'
+                : currentNode.row === rowIndex && currentNode.col === colIndex
+                ? 'active'
+                : 'default';
 
             return (
               <Cell

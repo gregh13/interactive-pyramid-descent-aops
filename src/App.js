@@ -12,11 +12,11 @@ const initialPyramid = [
   [10, 5, 2, 15, 5]
 ];
 
-const findPath = (pyramid, depth, index, remainingProduct, pathSoFar, targetProduct) => {
+const findPath = (pyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, setPathCoordinatesSet, setSolutionPath) => {
   // If we've reached the final row and the remaining product is 1, we've found a valid path
   if (depth === pyramid.length) {
     if (remainingProduct === 1) {
-      return pathSoFar;  // Return the valid path
+      return path;  // Return the valid path
     }
     return null;  // No valid path
   }
@@ -32,11 +32,11 @@ const findPath = (pyramid, depth, index, remainingProduct, pathSoFar, targetProd
   for (const { value, direction } of movementOptions) {
     if (remainingProduct % value === 0) {  // Only continue if the path value divides cleanly
       const updatedRemainingProduct = remainingProduct / value;
-      const newPath = pathSoFar + direction;
+      const newPath = path + direction;
       const newIndex = direction === 'L' ? index : index + 1;
 
       // Recursively search for a valid path
-      const result = findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct);
+      const result = findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct, setCurrentNode, setPathCoordinatesSet, setSolutionPath);
       if (result) {
         return result;  // Return the solution path if found
       }
@@ -49,27 +49,34 @@ const findPath = (pyramid, depth, index, remainingProduct, pathSoFar, targetProd
 
 const App = () => {
 
-  const [directionPath, setDirectionPath] = useState('???');
+  const [currentNode, setCurrentNode] = useState({ row: -1, col: -1 });
+  const [pathCoordinatesSet, setPathCoordinatesSet] = useState(new Set());
+  const [solutionPath, setSolutionPath] = useState('???');
+  
 
   const handleFindPath = () => {
-    // Initialize parameters to start search
+    // Initialize states to starting cell coordinates (i.e., top of the pyramid, depth = 0)
+    setCurrentNode({ row: 0, col: 0 });
+    setPathCoordinatesSet( new Set([`0,0`]));
+    setSolutionPath('???'); // Reset solution path
+
+    // Initialize parameters to start search in the level directly under the starting cell (i.e., depth = 1)
     const depth = 1;
     const index = 0;
     const remainingProduct = targetProduct / initialPyramid[0][0];
-    const pathSoFar = '';
+    const path = '';
 
-    // Find result and update direction path
-    const result = findPath(initialPyramid, depth, index, remainingProduct, pathSoFar, targetProduct);
-    setDirectionPath(result)
+    // Begin DFS search to find solution path
+    findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, setPathCoordinatesSet, setSolutionPath);
   };
 
   return (
     <div className="app">
       <h1>Pyramid Path Finder</h1>
-      <Pyramid pyramid={initialPyramid} />
+      <Pyramid pyramid={initialPyramid} currentNode={currentNode} pathCoordinatesSet={pathCoordinatesSet} />
       <button onClick={handleFindPath}>Find Path</button>
       <h3>Target Product: {targetProduct} </h3>
-      <h2>Descent Path: {directionPath ? directionPath : 'No Solution'}</h2>
+      <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>
     </div>
   );
 };
