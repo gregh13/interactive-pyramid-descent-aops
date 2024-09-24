@@ -9,10 +9,10 @@ const Pyramid = ({ pyramid, currentNode, pathCoordinateSet }) => {
         <div key={rowIndex} className="pyramid-row">
           {row.map((value, colIndex) => {
             const status =
-              pathCoordinateSet.has(`${rowIndex},${colIndex}`)
-                ? 'solution'
-                : currentNode.row === rowIndex && currentNode.col === colIndex
+              currentNode.row === rowIndex && currentNode.col === colIndex
                 ? 'active'
+                : pathCoordinateSet.has(`${rowIndex},${colIndex}`)
+                ? 'solution'
                 : 'default';
 
             return (
