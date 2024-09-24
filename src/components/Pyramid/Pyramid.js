@@ -1,7 +1,7 @@
 import React from 'react';
 import Cell from '../Cell/Cell.js';
 
-const Pyramid = ({ pyramid, currentNode, pathCoordinateSet }) => {
+const Pyramid = ({ pyramid, currentCell, pathCoordinateSet }) => {
   return (
     <div className="pyramid">
         
@@ -9,7 +9,7 @@ const Pyramid = ({ pyramid, currentNode, pathCoordinateSet }) => {
         <div key={rowIndex} className="pyramid-row">
           {row.map((value, colIndex) => {
             const status =
-              currentNode.row === rowIndex && currentNode.col === colIndex
+              currentCell.row === rowIndex && currentCell.col === colIndex
                 ? 'active'
                 : pathCoordinateSet.has(`${rowIndex},${colIndex}`)
                 ? 'solution'
