@@ -8,11 +8,11 @@
     margin: 5px;
   }
   
-  .active {
-    background-color: red;
-    border-radius: 50%;
-  }
-  
-  .solution {
-    background-color: green;
-  }
+.active {
+  background-color: red;
+  border-radius: 50%;
+}
+
+.solution {
+  background-color: green;
+}
