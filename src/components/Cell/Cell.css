@@ -9,10 +9,14 @@
   }
   
 .active {
-  background-color: red;
+  background-color: #d71f36;
   border-radius: 50%;
 }
 
 .solution {
-  background-color: green;
+  background-color: #009fad;
+}
+
+.solutionFound {
+  background-color: #61ad00;
 }
