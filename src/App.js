@@ -12,13 +12,16 @@ const initialPyramid = [
   [10, 5, 2, 15, 5]
 ];
 
-const findPath = (pyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet) => {
+const findPath = async (pyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet) => {
   // Create currentNode
   const currentNode = { row: depth, col: index };
   
   // Update current node and add it to the coordinates set
   setCurrentNode(currentNode);
   addPathCoordinateSet(currentNode);
+
+  // Slow down for visualization
+  await new Promise((resolve) => setTimeout(resolve, 500));  
   
   // If we've reached the final row and the remaining product is 1, we've found a valid path
   if (depth === pyramid.length) {
@@ -46,7 +49,7 @@ const findPath = (pyramid, depth, index, remainingProduct, path, targetProduct, 
       const newIndex = direction === 'L' ? index : index + 1;
 
       // Recursively search for a valid path
-      const result = findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet);
+      const result = await findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet);
       if (result) {
         return result;  // Return the solution path if found
       }
@@ -79,7 +82,7 @@ const App = () => {
     });
   };
 
-  const handleFindPath = () => {
+  const handleFindPath = async () => {
     // Initialize states to starting cell coordinates (i.e., top of the pyramid, depth = 0)
     setCurrentNode({ row: 0, col: 0 });
     setPathCoordinateSet( new Set([`0,0`]));
@@ -92,7 +95,7 @@ const App = () => {
     const path = '';
 
     // Begin DFS search to find solution path
-    const solution = findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet);
+    const solution = await findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, setCurrentNode, addPathCoordinateSet, removePathCoordinateSet);
 
     // Update solution state
     setSolutionPath(solution);
