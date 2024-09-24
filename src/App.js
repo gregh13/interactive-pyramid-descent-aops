@@ -112,7 +112,7 @@ const App = () => {
   return (
     <div className="app">
       <h1>Pyramid Path Finder</h1>
-      <Pyramid pyramid={initialPyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} />
+      <Pyramid pyramid={initialPyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
       <button onClick={handleFindPath}>Find Path</button>
       <h3>Target Product: {targetProduct} </h3>
       <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>

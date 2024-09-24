@@ -1,7 +1,7 @@
 import React from 'react';
 import Cell from '../Cell/Cell.js';
 
-const Pyramid = ({ pyramid, currentCell, pathCoordinateSet }) => {
+const Pyramid = ({ pyramid, currentCell, pathCoordinateSet, solutionPath }) => {
   return (
     <div className="pyramid">
         
@@ -20,6 +20,7 @@ const Pyramid = ({ pyramid, currentCell, pathCoordinateSet }) => {
                 key={`${rowIndex}-${colIndex}`}
                 value={value}
                 status={status}
+                finished={solutionPath !== "???" ? "Found" : ""}
               />
             );
           })}

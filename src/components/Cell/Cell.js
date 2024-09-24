@@ -1,9 +1,9 @@
 import React from 'react';
 import './Cell.css';
 
-const Cell = ({ value, status }) => {
+const Cell = ({ value, status, finished }) => {
   return (
-    <div className={`cell ${status}`}>
+    <div className={`cell ${status}${finished}`}>
       {value}
     </div>
   );
