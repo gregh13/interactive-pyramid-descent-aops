@@ -16,29 +16,29 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
   // Create currentNode
   const currentNode = { row: depth, col: index };
   
-  // Update current node and add it to the coordinates set
+  // Update current node and add to coordinate set
   setCurrentNode(currentNode);
   addPathCoordinateSet(currentNode);
 
-  // Slow down for visualization
+  // Intentionally slow down search so that new state can reflect and be seen
   await new Promise((resolve) => setTimeout(resolve, 500));  
-  
+
   // If we've reached the final row and the remaining product is 1, we've found a valid path
-  if (depth === pyramid.length) {
+  if (depth >= pyramid.length - 1) {
     if (remainingProduct === 1) {
-      console.log()
-      return path;  // Return path
+      setCurrentNode({ row: -1, col: -1 }) // Reset currentNode value
+      return path;  // Return valid path
     }
     // Remove invalid node from coordinate set
     removePathCoordinateSet(currentNode);
     return null;  // No valid path
   }
 
-  // Get the current row's available options for movement (left and right)
-  const currentRow = pyramid[depth];
+  // Get the current node's available options for movement (one row down, left and right)
+  const nextRow = pyramid[depth + 1];
   const movementOptions = [
-    { value: currentRow[index], direction: 'L' },     // Move left (same index)
-    { value: currentRow[index + 1], direction: 'R' }  // Move right (index + 1)
+    { value: nextRow[index], direction: 'L' },     // Move left (same index)
+    { value: nextRow[index + 1], direction: 'R' }  // Move right (index + 1)
   ];
 
   // Explore both options (left and right)
@@ -53,11 +53,19 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
       if (result) {
         return result;  // Return the solution path if found
       }
+    } else {
+      // Set current node to invalid next node to show it has been looked at
+      setCurrentNode( {row: depth + 1, col: direction === 'L' ? index : index + 1})
+      await new Promise((resolve) => setTimeout(resolve, 500));  // Slow down for visualization 
     }
+    // Set current node back to this parent node before moving on
+    setCurrentNode( {row: depth, col: index})
+    await new Promise((resolve) => setTimeout(resolve, 500));  // Slow down for visualization
   }
 
   // Remove invalid node from coordinate set
   removePathCoordinateSet(currentNode);
+
   return null;  // No valid solutions down this path
 };
 
@@ -83,13 +91,13 @@ const App = () => {
   };
 
   const handleFindPath = async () => {
-    // Initialize states to starting cell coordinates (i.e., top of the pyramid, depth = 0)
-    setCurrentNode({ row: 0, col: 0 });
-    setPathCoordinateSet( new Set([`0,0`]));
-    setSolutionPath('???'); // Reset solution path
+    // Reset state values
+    setCurrentNode({ row: -1, col: -1 });
+    setPathCoordinateSet( new Set());
+    setSolutionPath('???');
 
-    // Initialize parameters to start search in the level directly under the starting cell (i.e., depth = 1)
-    const depth = 1;
+    // Initialize parameters to start search at the top of the pyramid
+    const depth = 0;
     const index = 0;
     const remainingProduct = targetProduct / initialPyramid[0][0];
     const path = '';
