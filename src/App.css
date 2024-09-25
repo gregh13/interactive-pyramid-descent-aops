@@ -7,3 +7,12 @@ button {
 .app {
 text-align: center;
 }
+
+.slider-container {
+  margin-top: 20px;
+}
+
+#speedRange {
+  width: 300px;
+  margin: 10px;
+}

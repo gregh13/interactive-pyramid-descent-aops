@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Pyramid from './components/Pyramid/Pyramid';
 import './App.css';
 
@@ -12,7 +12,7 @@ const initialPyramid = [
   [10, 5, 2, 15, 5]
 ];
 
-const findPath = async (pyramid, depth, index, remainingProduct, path, targetProduct, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet) => {
+const findPath = async (pyramid, depth, index, remainingProduct, path, targetProduct, waitTimeRef, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet) => {
   // Create current cell object
   const currentCell = { row: depth, col: index };
   
@@ -21,7 +21,7 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
   addPathCoordinateSet(currentCell);
 
   // Intentionally slow down search so that new state can reflect and be seen
-  await new Promise((resolve) => setTimeout(resolve, 500));  
+  await new Promise((resolve) => setTimeout(resolve, waitTimeRef.current));  
 
   // If we've reached the final row and the remaining product is 1, we've found a valid path
   if (depth >= pyramid.length - 1) {
@@ -49,18 +49,18 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
       const newIndex = direction === 'L' ? index : index + 1;
 
       // Recursively search for a valid path
-      const result = await findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
+      const result = await findPath(pyramid, depth + 1, newIndex, updatedRemainingProduct, newPath, targetProduct, waitTimeRef, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
       if (result) {
         return result;  // Return the solution path if found
       }
     } else {
-      // Set current Cell to invalid next cell to show it has been looked at
+      // Set current cell to indicate it has been checked
       setCurrentCell( {row: depth + 1, col: direction === 'L' ? index : index + 1})
-      await new Promise((resolve) => setTimeout(resolve, 500));  // Slow down for visualization 
+      await new Promise((resolve) => setTimeout(resolve, waitTimeRef.current));  // Slow down for visualization 
     }
-    // Set current Cell back to this parent cell before moving on
+    // Set current cell back to this parent cell before moving on
     setCurrentCell( {row: depth, col: index})
-    await new Promise((resolve) => setTimeout(resolve, 500));  // Slow down for visualization
+    await new Promise((resolve) => setTimeout(resolve, waitTimeRef.current));  // Slow down for visualization
   }
 
   // Remove invalid cell from coordinate set
@@ -75,6 +75,17 @@ const App = () => {
   const [currentCell, setCurrentCell] = useState({ row: -1, col: -1 });
   const [pathCoordinateSet, setPathCoordinateSet] = useState(new Set());
   const [solutionPath, setSolutionPath] = useState('???');
+  const [isSearching, setIsSearching] = useState(false); 
+  const [waitTime, setWaitTime] = useState(500);
+  const waitTimeRef = useRef(waitTime);
+
+  // Keep the speedRef current as the slider is adjusted
+  const handleSpeedChange = (e) => {
+    // Reverse slider values: Makes higher values on the slider correspond to faster speeds (lower wait times)
+    const newWaitTime = 1000 - Number(e.target.value);
+    setWaitTime(newWaitTime);
+    waitTimeRef.current = newWaitTime;  // Update the ref with the latest value
+  };
   
   // Helper function to add a cell to coordinate set
   const addPathCoordinateSet = ({ row, col }) => {
@@ -95,6 +106,7 @@ const App = () => {
     setCurrentCell({ row: -1, col: -1 });
     setPathCoordinateSet( new Set());
     setSolutionPath('???');
+    setIsSearching(true); // Disables search button while searching
 
     // Initialize parameters to start search at the top of the pyramid
     const depth = 0;
@@ -103,18 +115,39 @@ const App = () => {
     const path = '';
 
     // Begin DFS search to find solution path
-    const solution = await findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
+    const solution = await findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, waitTimeRef, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
 
     // Update solution state
     setSolutionPath(solution);
+
+    // Re-enable search button
+    setIsSearching(false);
   };
 
   return (
     <div className="app">
-      <h1>Pyramid Path Finder</h1>
-      <Pyramid pyramid={initialPyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
-      <button onClick={handleFindPath}>Find Path</button>
+      <h1>Pyramid Descent</h1>
       <h3>Target Product: {targetProduct} </h3>
+      <Pyramid pyramid={initialPyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
+      <button onClick={handleFindPath} disabled={isSearching}>
+        {isSearching ? 'Searching...' : 'Find Path'}
+      </button>
+
+      <div className="slider-container">
+        <span>Turtle</span>
+        <label htmlFor="speedRange"></label>
+        <input
+          id="speedRange"
+          type="range"
+          min="100"
+          max="900"
+          step="100"
+          value={1000 - waitTime} // Reverse slider values: Higher values on the slider correspond to faster speeds (lower resulting wait times)
+          onChange={handleSpeedChange}  // Update speed
+        />
+        <span>Rabbit</span>
+      </div>
+
       <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>
     </div>
   );
