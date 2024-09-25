@@ -2,9 +2,9 @@ import React, { useRef, useState } from 'react';
 import Pyramid from './components/Pyramid/Pyramid';
 import './App.css';
 
-const targetProduct = 720;  // Target to reach
+const defaultTargetProduct = 720;  // Target to reach
 
-const initialPyramid = [
+const defaultPyramid = [
   [2],
   [4, 3],
   [3, 2, 6],
@@ -71,21 +71,14 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
 
 
 const App = () => {
-
+  const [targetProduct, setTargetProduct] = useState(defaultTargetProduct);  // Target product
+  const [pyramid, setPyramid] = useState(defaultPyramid);  // Pyramid structure
   const [currentCell, setCurrentCell] = useState({ row: -1, col: -1 });
   const [pathCoordinateSet, setPathCoordinateSet] = useState(new Set());
   const [solutionPath, setSolutionPath] = useState('???');
   const [isSearching, setIsSearching] = useState(false); 
   const [waitTime, setWaitTime] = useState(500);
   const waitTimeRef = useRef(waitTime);
-
-  // Keep the speedRef current as the slider is adjusted
-  const handleSpeedChange = (e) => {
-    // Reverse slider values: Makes higher values on the slider correspond to faster speeds (lower wait times)
-    const newWaitTime = 1000 - Number(e.target.value);
-    setWaitTime(newWaitTime);
-    waitTimeRef.current = newWaitTime;  // Update the ref with the latest value
-  };
   
   // Helper function to add a cell to coordinate set
   const addPathCoordinateSet = ({ row, col }) => {
@@ -101,6 +94,61 @@ const App = () => {
     });
   };
 
+  // Keep the waitTimeRef current as the slider is adjusted
+  const handleSpeedChange = (e) => {
+    // Reverse slider values: Makes higher values on the slider correspond to faster speeds (lower wait times)
+    const newWaitTime = 1000 - Number(e.target.value);
+    setWaitTime(newWaitTime);
+    waitTimeRef.current = newWaitTime;  // Update the ref with the latest value
+  };
+
+  // Process new pyramid data
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+  
+    if (file) {
+
+      const reader = new FileReader();
+      
+      reader.onload = (e) => {
+        const content = e.target.result;
+        const lines = content.trim().split('\n');
+  
+        // First line should contain the target product
+        const targetLine = lines[0].match(/Target:\s*(\d+)/);
+        if (!targetLine) {
+          alert('Invalid file format: Missing target value.');
+          return;
+        }
+        
+        const newTargetProduct = parseInt(targetLine[1], 10);
+  
+        // Remaining lines should contain the pyramid structure
+        const newPyramid = lines.slice(1).map(line => {
+          return line.split(',').map(num => parseInt(num, 10));
+        });
+  
+        // Update state with the new target and pyramid
+        setTargetProduct(newTargetProduct);
+        setPyramid(newPyramid);
+
+        // Reset state values
+        setCurrentCell({ row: -1, col: -1 });
+        setPathCoordinateSet( new Set());
+        setSolutionPath('???');
+
+        // Reset file input value to allow re-upload of the same file
+        event.target.value = null;
+      };
+  
+      reader.onerror = () => {
+        alert('Failed to read the file.');
+      };
+  
+      reader.readAsText(file);
+    }
+  };
+
   const handleFindPath = async () => {
     // Reset state values
     setCurrentCell({ row: -1, col: -1 });
@@ -111,11 +159,11 @@ const App = () => {
     // Initialize parameters to start search at the top of the pyramid
     const depth = 0;
     const index = 0;
-    const remainingProduct = targetProduct / initialPyramid[0][0];
+    const remainingProduct = targetProduct / pyramid[0][0];
     const path = '';
 
     // Begin DFS search to find solution path
-    const solution = await findPath(initialPyramid, depth, index, remainingProduct, path, targetProduct, waitTimeRef, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
+    const solution = await findPath(pyramid, depth, index, remainingProduct, path, targetProduct, waitTimeRef, setCurrentCell, addPathCoordinateSet, removePathCoordinateSet);
 
     // Update solution state
     setSolutionPath(solution);
@@ -128,7 +176,7 @@ const App = () => {
     <div className="app">
       <h1>Pyramid Descent</h1>
       <h3>Target Product: {targetProduct} </h3>
-      <Pyramid pyramid={initialPyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
+      <Pyramid pyramid={pyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
       <button onClick={handleFindPath} disabled={isSearching}>
         {isSearching ? 'Searching...' : 'Find Path'}
       </button>
@@ -149,6 +197,23 @@ const App = () => {
       </div>
 
       <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>
+      <div className="file-upload">
+        <p> Want to use your own custom pyramid?</p>
+        <p> Upload your file below. Only <code>.txt</code> extensions are accepted. </p>
+        {/* Link to download the static file */}
+        <p> Download the example to see the required format (must match exactly):
+          <a href="/pyramid_sample_input.txt" download > Example Pyramid </a>
+        </p>
+
+        <input
+          id="fileInput"
+          type="file"
+          accept=".txt"
+          onChange={handleFileUpload}
+          disabled={isSearching}
+        />
+      </div>
+
     </div>
   );
 };

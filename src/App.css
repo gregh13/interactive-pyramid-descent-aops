@@ -1,11 +1,11 @@
 button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-  }
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
   
 .app {
-text-align: center;
+  text-align: center;
 }
 
 .slider-container {
@@ -15,4 +15,18 @@ text-align: center;
 #speedRange {
   width: 300px;
   margin: 10px;
+}
+
+.file-upload {
+  margin-top: 100px;
+  margin-bottom: 50px;
+}
+
+.file-upload a {
+  text-decoration: none;
+  color: #007BFF;
+}
+
+.file-upload a:hover {
+  color: #0015ff; 
 }
