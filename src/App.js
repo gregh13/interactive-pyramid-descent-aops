@@ -71,6 +71,7 @@ const findPath = async (pyramid, depth, index, remainingProduct, path, targetPro
 
 
 const App = () => {
+  const [uploadedFileName, setUploadedFileName] = useState(null);
   const [targetProduct, setTargetProduct] = useState(defaultTargetProduct);  // Target product
   const [pyramid, setPyramid] = useState(defaultPyramid);  // Pyramid structure
   const [currentCell, setCurrentCell] = useState({ row: -1, col: -1 });
@@ -107,6 +108,8 @@ const App = () => {
     const file = event.target.files[0];
   
     if (file) {
+      setUploadedFileName(file.name);
+
       const reader = new FileReader();
       
       reader.onload = (e) => {
@@ -167,9 +170,6 @@ const App = () => {
   
       reader.onerror = () => {
         alert('Failed to read the file.');
-        
-        // Reset file input value to allow re-upload of the same file
-        event.target.value = null;
       };
   
       reader.readAsText(file);
@@ -232,12 +232,21 @@ const App = () => {
             Download the example to see the required format:
             <a href="/pyramid_sample_input.txt" download> Example Pyramid</a>
           </p>
+
+          <button 
+            onClick={() => document.getElementById('fileInput').click()} 
+            className="upload-button"
+            disabled={isSearching} 
+          >
+            {uploadedFileName ? `File Selected: ${uploadedFileName}` : 'Choose File'}
+          </button>
+
           <input
             id="fileInput"
             type="file"
             accept=".txt"
             onChange={handleFileUpload}
-            disabled={isSearching}
+            style={{ display: 'none' }}  // Hide the input
           />
         </div>
       </div>

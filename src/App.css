@@ -36,7 +36,7 @@ button {
   cursor: pointer;
   font-size: 16px;
   margin: 20px 0 ;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.4s ease;
 }
 
 button:disabled {
@@ -47,7 +47,43 @@ button:hover:not(:disabled) {
   background-color: #0056b3; /* Darker blue on hover */
 }
 
-/* Input range slider styling */
+.upload-button {
+  color: #007BFF;
+  background-color: white;
+  padding: 8px 22px;  /* Same padding as your other buttons */
+  border: 1px solid #007BFF; 
+  border-radius: 5px;
+  border-color: #007BFF;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.4s ease;
+}
+
+.upload-button:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+.upload-button:disabled {
+  background-color: #ccc;  /* Gray out when disabled */
+  border: 2px solid #ccc;  /* Match the disabled border color */
+  color: white;
+}
+
+.file-upload {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.file-upload a {
+  text-decoration: none;
+  color: #007BFF;
+}
+
+.file-upload a:hover {
+  color: #0015ff; 
+}
+
 .slider-container input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
@@ -75,18 +111,4 @@ button:hover:not(:disabled) {
 #speedRange {
   width: 300px;
   margin: 20px;
-}
-
-.file-upload {
-  margin-top: 50px;
-  margin-bottom: 50px;
-}
-
-.file-upload a {
-  text-decoration: none;
-  color: #007BFF;
-}
-
-.file-upload a:hover {
-  color: #0015ff; 
 }
