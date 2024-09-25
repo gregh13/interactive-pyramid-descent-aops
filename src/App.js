@@ -107,7 +107,6 @@ const App = () => {
     const file = event.target.files[0];
   
     if (file) {
-
       const reader = new FileReader();
       
       reader.onload = (e) => {
@@ -117,37 +116,66 @@ const App = () => {
         // First line should contain the target product
         const targetLine = lines[0].match(/Target:\s*(\d+)/);
         if (!targetLine) {
-          alert('Invalid file format: Missing target value.');
+          alert('Invalid file format: Missing or invalid target value.');
+          return;
+        }
+  
+        // Validate that the target value is a valid number
+        const newTargetProduct = parseInt(targetLine[1], 10);
+        if (isNaN(newTargetProduct)) {
+          alert('Invalid target value. The value after "Target:" must be a valid number.');
           return;
         }
         
-        const newTargetProduct = parseInt(targetLine[1], 10);
+        // Validate the pyramid structure
+        const newPyramid = [];
+        
+        for (let i = 1; i < lines.length; i++) {
+          const row = lines[i].split(',').map(num => num.trim());
   
-        // Remaining lines should contain the pyramid structure
-        const newPyramid = lines.slice(1).map(line => {
-          return line.split(',').map(num => parseInt(num, 10));
-        });
+          // Ensure all values in the row are valid numbers
+          if (row.some(num => isNaN(num) || num === "")) {
+            alert(`Invalid number detected on line ${i + 1}. Please ensure all values are numbers.`);
+            return;
+          }
   
-        // Update state with the new target and pyramid
+          // Convert strings to numbers
+          const numericRow = row.map(num => parseInt(num, 10));
+  
+          // Ensure that the length of the current row is one more than the previous row
+          if (numericRow.length !== i) {
+            alert(`Invalid pyramid structure on line ${i + 1}. Expected ${i} numbers but found ${numericRow.length}.`);
+            return;
+          }
+          
+          // Add valid row to pyramid
+          newPyramid.push(numericRow);
+        }
+  
+        // If everything is valid, update the state
         setTargetProduct(newTargetProduct);
         setPyramid(newPyramid);
-
+  
         // Reset state values
         setCurrentCell({ row: -1, col: -1 });
-        setPathCoordinateSet( new Set());
+        setPathCoordinateSet(new Set());
         setSolutionPath('???');
-
+  
         // Reset file input value to allow re-upload of the same file
         event.target.value = null;
       };
   
       reader.onerror = () => {
         alert('Failed to read the file.');
+        
+        // Reset file input value to allow re-upload of the same file
+        event.target.value = null;
       };
   
       reader.readAsText(file);
     }
   };
+  
 
   const handleFindPath = async () => {
     // Reset state values
