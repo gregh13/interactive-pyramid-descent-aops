@@ -6,11 +6,11 @@
     border: 1px solid black;
     display: inline-block;
     margin: 5px;
+    border-radius: 50%;
   }
   
 .active {
   background-color: #d71f36;
-  border-radius: 50%;
 }
 
 .solution {
