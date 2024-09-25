@@ -174,48 +174,48 @@ const App = () => {
 
   return (
     <div className="app">
-      <h1>Pyramid Descent</h1>
-      <h3>Target Product: {targetProduct} </h3>
-      <Pyramid pyramid={pyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
-      <button onClick={handleFindPath} disabled={isSearching}>
-        {isSearching ? 'Searching...' : 'Find Path'}
-      </button>
+      <div className="app-container">
+        <h1>AoPS Pyramid Descent</h1>
+        <h3>Target Product: {targetProduct}</h3>
+        <Pyramid pyramid={pyramid} currentCell={currentCell} pathCoordinateSet={pathCoordinateSet} solutionPath={solutionPath} />
+        <button onClick={handleFindPath} disabled={isSearching}>
+          {isSearching ? 'Searching...' : 'Find Path'}
+        </button>
 
-      <div className="slider-container">
-        <span>Turtle</span>
-        <label htmlFor="speedRange"></label>
-        <input
-          id="speedRange"
-          type="range"
-          min="100"
-          max="900"
-          step="100"
-          value={1000 - waitTime} // Reverse slider values: Higher values on the slider correspond to faster speeds (lower resulting wait times)
-          onChange={handleSpeedChange}  // Update speed
-        />
-        <span>Rabbit</span>
+        <div className="slider-container">
+          <span>Turtle</span>
+          <input
+            id="speedRange"
+            type="range"
+            min="100"
+            max="900"
+            step="100"
+            value={1000 - waitTime}
+            onChange={handleSpeedChange}
+          />
+          <span>Rabbit</span>
+        </div>
+
+        <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>
+        
+        <div className="file-upload">
+          <p>Upload your own custom pyramid text file below (<code>.txt</code>).</p>
+          <p>
+            Download the example to see the required format:
+            <a href="/pyramid_sample_input.txt" download> Example Pyramid</a>
+          </p>
+          <input
+            id="fileInput"
+            type="file"
+            accept=".txt"
+            onChange={handleFileUpload}
+            disabled={isSearching}
+          />
+        </div>
       </div>
-
-      <h2>Descent Path: {solutionPath ? solutionPath : 'No Solution'}</h2>
-      <div className="file-upload">
-        <p> Want to use your own custom pyramid?</p>
-        <p> Upload your file below. Only <code>.txt</code> extensions are accepted. </p>
-        {/* Link to download the static file */}
-        <p> Download the example to see the required format (must match exactly):
-          <a href="/pyramid_sample_input.txt" download > Example Pyramid </a>
-        </p>
-
-        <input
-          id="fileInput"
-          type="file"
-          accept=".txt"
-          onChange={handleFileUpload}
-          disabled={isSearching}
-        />
-      </div>
-
     </div>
   );
 };
+
 
 export default App;

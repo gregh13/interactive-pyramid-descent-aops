@@ -1,24 +1,84 @@
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
+/* Global Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif; /* Google Font */
+  background-color: #1b365d;
+  height: 100%;
 }
-  
+
+/* Center the main app content */
 .app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1% 0%;
+}
+
+/* Card-style main content container */
+.app-container {
+  background-color: white;
+  padding: 10px 50px;  /* More padding for top and bottom */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Light shadow for pop-out effect */
+  max-width: 100%;
   text-align: center;
 }
 
-.slider-container {
-  margin-top: 20px;
+/* Buttons */
+button {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 30px;  /* Increased padding for more space around the button */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 20px 0 ;
+  transition: background-color 0.3s ease;
+}
+
+button:disabled {
+  background-color: #ccc; /* Disabled button color */
+}
+
+button:hover:not(:disabled) {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Input range slider styling */
+.slider-container input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.slider-container input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #007BFF;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.slider-container input[type="range"]:hover {
+  opacity: 1;
 }
 
 #speedRange {
   width: 300px;
-  margin: 10px;
+  margin: 20px;
 }
 
 .file-upload {
-  margin-top: 100px;
+  margin-top: 50px;
   margin-bottom: 50px;
 }
 
